@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+        rel="stylesheet">
+    <title>新詩生成器</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            font-family: 'Roboto', sans-serif;
+            overflow: hidden;
+
+            --mainc: #fff;
+            --backc: #fafafa;
+            --bordc: #dbdbdb;
+            --front: #000;
+            color: var(--front);
+        }
+
+        .dark {
+            --mainc: #1a1a1a;
+            --backc: #2a2a2a;
+            --bordc: #3a3a3a;
+            --front: #dadada;
+        }
+
+        .sun,
+        .dark .night {
+            display: none;
+        }
+
+        .night,
+        .dark .sun {
+            display: block;
+        }
+
+        .head {
+            background-color: var(--mainc);
+            width: 100%;
+            height: 85px;
+            /* z-index: 1000; */
+        }
+
+        .headinner {
+            margin: auto;
+            width: 95%;
+            max-width: 1024px;
+            display: flex;
+        }
+
+        .headinner button {
+            background: none;
+            border: none;
+            margin: auto;
+            margin-right: 0;
+            height: 50px;
+            width: 50px;
+        }
+
+        .headinner svg {
+            color: var(--front);
+        }
+
+        .head::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            width: 100%;
+            height: 1px;
+            background-color: var(--bordc);
+        }
+
+        .main {
+            width: 100%;
+            background-color: var(--backc);
+            position: absolute;
+            top: 86px;
+            bottom: 0px;
+            overflow: auto;
+            overflow-x: hidden;
+        }
+
+        .block {
+            margin: 30px auto;
+            width: 95%;
+            max-width: 1024px;
+            background-color: var(--mainc);
+            border: 1px solid var(--bordc);
+            border-radius: 4px;
+            display: flex;
+            flex-direction: column;
+        }
+		
+		.secblock {
+            margin: 30px auto;
+            width: 95%;
+            max-width: 1024px;
+            background-color: var(--mainc);
+            <!--border: 1px solid var(--bordc);-->
+            border-radius: 4px;
+            display: flex;
+            flex-direction: column;
+        }
+		
+		.firstblock {
+            margin: 30px auto;
+            width: 95%;
+            max-width: 1024px;
+            background-color: var(--mainc);
+            border: 1px solid var(--bordc);
+            border-radius: 4px;
+            display: flex;
+            flex-direction: column;
+        }
+		
+        .blockhead {
+            padding: 4px 16px;
+            /* height: 50px; */
+            border-bottom: 1px solid var(--bordc);
+            display: flex;
+        }
+
+        .blockmain {
+            padding: 16px 16px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .blockmain p {
+            font-size: 20px;
+            font-weight: 900;
+            margin: 0;
+        }
+
+        .keyin {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .scount {
+            width: 50%;
+            display: flex;
+            justify-content: left;
+            padding: 16px 0;
+            margin: auto;
+            <!--border-bottom: 1px solid var(--bordc);-->
+        }
+
+        .scount input {
+            height: 50px;
+            width: 300px;
+            border: none;
+            border-bottom: #de6c83 solid 4px;
+            padding: 0;
+            margin: 0;
+            margin-right: 25px;
+            font-size: 18.72px;
+            font-weight: bolder;
+            text-align: center;
+            vertical-align: middle;
+            background-color: var(--mainc);
+            color: var(--front);
+            outline: none;
+        }
+
+        .sentens {
+            margin: 16px auto;
+            width: 90%;
+            display: flex;
+        }
+
+        .scname {
+            width: 60px;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sentens div {
+            display: flex;
+            margin: auto;
+        }
+
+        .scount h3,
+        .sentens h3 {			
+			padding: 0;
+            margin: 23px 10px;
+        }
+
+        .scount button,
+        .sentens button {
+            border: none;
+            padding: 0;
+            margin: 0 4px;
+            background: none;
+            color: var(--front);
+            cursor: pointer;
+        }
+
+        .scount button:disabled,
+        .sentens button:disabled {
+            color: var(--backc);
+            cursor: default;
+        }
+
+        .sentens input {
+            height: 25px;
+            width: 25px;
+            border: none;
+            border-bottom: #de6c83 solid 4px;
+            padding: 0;
+            margin: 0;
+            font-size: 18.72px;
+            font-weight: bolder;
+            text-align: center;
+            vertical-align: middle;
+            background-color: var(--mainc);
+            color: var(--front);
+            outline: none;
+        }
+
+        .sramy select {
+            border: none;
+            outline: none;
+            height: 25px;
+            font-size: 18.72px;
+            font-weight: bolder;
+            background-color: var(--mainc);
+            color: var(--front);
+        }
+
+        .sramy h3 {
+            margin: auto 2px;
+        }
+
+        .submitbut {
+            height: 35px;
+            width: 80px;
+            font-size: 18px;
+            font-weight: bolder;
+            border: none;
+            border-radius: 4px;
+            margin: 16px 2px 0 auto;
+            background-color: var(--front);
+            color: var(--backc);
+            cursor: pointer;
+
+            transition: all 0.25s;
+        }
+
+        .submitbut:hover {
+            /* background-color: #01ab94; */
+            background-color: #DE6C83;
+            color: var(--front);
+        }
+
+        .loader {
+            border: 16px solid var(--bordc);
+            border-radius: 50%;
+            border-top: 16px solid #DE6C83;
+            width: 100px;
+            height: 100px;
+            margin: 50px auto;
+            -webkit-animation: spin 2s linear infinite;
+            /* Safari */
+            animation: spin 2s linear infinite;
+        }
+
+        /* Safari */
+        @-webkit-keyframes spin {
+            0% {
+                -webkit-transform: rotate(0deg);
+            }
+
+            100% {
+                -webkit-transform: rotate(360deg);
+            }
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+		.onoffswitch {
+			position: relative; width: 140px; line-height: 10px; 
+			-webkit-user-select:none; -moz-user-select:none; -ms-user-select: none;
+		}
+		.onoffswitch-checkbox {
+			position: relative;
+			opacity: 0;
+			pointer-events: none;
+		}
+		.onoffswitch-label {
+			display: block; overflow: hidden; cursor: pointer; margin-left: 20px; margin-right: -25px;
+			border: 2px solid #FFFFFF; border-radius: 20px;
+		}
+		.onoffswitch-inner {
+			display: block; width: 200%; margin-left: -100%;
+			transition: margin 0.3s ease-in 0s;
+		}
+		.onoffswitch-inner:before, .onoffswitch-inner:after {
+			display: block; float: left; width: 50%; height: 30px; padding: 0; line-height: 30px;
+			font-size: 14px; color: white; font-family: Trebuchet, Arial, sans-serif; font-weight: bold;
+			box-sizing: border-box;
+		}
+		.onoffswitch-inner:before {
+			content: "進階模式 ON";
+			padding-left: 10px;
+			background-color: #EEEEEE; color: #000000;
+		}
+		.onoffswitch-inner:after {
+			content: " 進階模式 OFF";
+			padding-right: 10px;
+			background-color: #DCDCDC; color: #FFFFFF;
+			text-align: right;
+		}
+		.onoffswitch-switch {
+			display: block; width: 25px; height: 23px; margin: -20px; margin-top: 23px;
+			background: #F08080;
+			position: absolute; top: 0; bottom: 0;
+			right: 105px;
+			border: 2px solid #FFFFFF; border-radius: 17px;
+			transition: all 0.3s ease-in 0s; 
+		}
+		.onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-inner {
+			margin-left: 0;
+		}
+		.onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-switch {
+			right: 0px; 
+		}
+
+    </style>
+</head>
+{% raw %}
+
+<body>
+    <script src="https://unpkg.com/vue@3"></script>
+
+    <div id="app">
+        <heads></heads>
+        <mains></mains>
+    </div>
+
+    <script type="module">
+        const vapp = Vue.createApp({})
+
+        vapp.component('heads', {
+            data() {
+                return {
+
+                }
+            },
+            template: `
+            <div class="head">
+                <div class="headinner">
+                    <h1 class="inner">新詩生成器</h1>
+                    <button id="mode">
+                        <svg class="night" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
+                            viewBox="0 0 16 16">
+                            <path
+                                d="M6 .278a.768.768 0 0 1 .08.858 7.208 7.208 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 0 1 .81.316.733.733 0 0 1-.031.893A8.349 8.349 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 0 1 6 .278z" />
+                            <path
+                                d="M10.794 3.148a.217.217 0 0 1 .412 0l.387 1.162c.173.518.579.924 1.097 1.097l1.162.387a.217.217 0 0 1 0 .412l-1.162.387a1.734 1.734 0 0 0-1.097 1.097l-.387 1.162a.217.217 0 0 1-.412 0l-.387-1.162A1.734 1.734 0 0 0 9.31 6.593l-1.162-.387a.217.217 0 0 1 0-.412l1.162-.387a1.734 1.734 0 0 0 1.097-1.097l.387-1.162zM13.863.099a.145.145 0 0 1 .274 0l.258.774c.115.346.386.617.732.732l.774.258a.145.145 0 0 1 0 .274l-.774.258a1.156 1.156 0 0 0-.732.732l-.258.774a.145.145 0 0 1-.274 0l-.258-.774a1.156 1.156 0 0 0-.732-.732l-.774-.258a.145.145 0 0 1 0-.274l.774-.258c.346-.115.617-.386.732-.732L13.863.1z" />
+                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" class="sun"
+                            viewBox="0 0 16 16">
+                            <path
+                                d="M12 8a4 4 0 1 1-8 0 4 4 0 0 1 8 0zM8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0zm0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13zm8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5zM3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8zm10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0zm-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707zM4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708z" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            `
+        })
+
+        vapp.component('mains', {
+            data() {
+                return {
+                    run:false,
+                    output: ['無'],
+                    keyword: '',
+                    sdata: [
+                        {
+                            s: 1,
+                            l: 5,
+                            n: 1,
+                            m: 2,
+                            a: '',
+                            b: '',
+                            r: 'ㄓ',
+                        },
+                    ],
+                }
+            },
+            methods: {
+                sdata_push() {
+                    this.sdata.push({
+                        s: this.sdata.length + 1,
+                        l: 5,
+                        n: 1,
+                        m: 2,
+                        a: '',
+                        b: '',
+                        r: 'ㄓ',
+                    })
+                },
+                sdata_pop() {
+                    this.sdata.pop()
+                },
+                submit() {
+                    this.run=true
+                    fetch("/poem/", {
+                        method: 'POST',
+                        body: JSON.stringify({
+                            data: this.sdata,
+                            keyword: this.keyword
+                        }),
+                        headers: new Headers({
+                            'Content-Type': 'application/json'
+                        })
+                    })
+                        .then((res) => {
+                            const data = res.json();
+                            return data;
+                        })
+                        .then((data) => {
+                            // console.log(typeof(data));
+                            // this.output='ok';
+                            this.output = data.message;
+                            this.run=false;
+                        });
+                }
+            },
+            computed: {
+                scount() {
+                    return this.sdata.length;
+                }
+            },
+            template: `
+            <div class="main">
+                <div class="block">
+                    <div class="blockhead">
+                        <h2>格式選擇</h2>
+						<div class="onoffswitch">
+							<input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch" tabindex="0" >							
+							<label class="onoffswitch-label" for="myonoffswitch"><a href="index02.html">							
+								<span class="onoffswitch-inner"></span>								
+								<span class="onoffswitch-switch"></span>
+							</label>
+						</div>
+                    </div>
+					<div class="secblock">
+						<div class="scount">
+							<h2>形式選擇</h2>
+								
+						</div>							
+						<div class="scount">
+							<h2>標題</h2>
+							<input class='sinput' type="text" v-model="keyword">
+						</div>							
+						<div class="scount">
+							<h2>行數</h2>
+							<button :disabled="scount>=10" @click="sdata_push">
+								<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
+									class="bi bi-plus-circle-fill" viewBox="0 0 16 16">
+									<path
+										d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3v-3z" />
+								</svg>
+							</button>
+							<button :disabled="scount<=1" @click="sdata_pop">
+								<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
+									class="bi bi-dash-circle-fill" viewBox="0 0 16 16">
+									<path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM4.5 7.5a.5.5 0 0 0 0 1h7a.5.5 0 0 0 0-1h-7z" />
+								</svg>
+							</button>
+							<h3>{{scount}} 句</h3>
+						</div>
+						<article class="sentens">
+							<div class="sramy">
+								<h2>韻腳</h2>
+								<select v-model='rdata'>
+										<option v-for="rs in ramy">{{rs}}</option>
+								</select>
+							</div>
+						</article>						
+					</div>
+					
+					
+					<div class="firstblock">
+						<div class="scount">
+                        <input class='sinput' type="text" v-model="keyword">
+                        <button :disabled="scount>=10" @click="sdata_push">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
+                                class="bi bi-plus-circle-fill" viewBox="0 0 16 16">
+                                <path
+                                    d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3v-3z" />
+                            </svg>
+                        </button>
+                        <button :disabled="scount<=1" @click="sdata_pop">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
+                                class="bi bi-dash-circle-fill" viewBox="0 0 16 16">
+                                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM4.5 7.5a.5.5 0 0 0 0 1h7a.5.5 0 0 0 0-1h-7z" />
+                            </svg>
+                        </button>
+                        <h3>{{scount}} 句</h3>
+						</div>
+					
+						<div class="blockmain">
+							<div class="keyin">
+								<sentens v-for="i in sdata" :i="i.s" v-model:l="i.l" v-model:n="i.n" v-model:m="i.m" v-model:a="i.a" v-model:b="i.b" v-model:r="i.r"></sentens>
+							</div>						
+						</div>
+					</div>
+					
+					<input @click='submit' type="submit" class="submitbut" value="Submit">
+				</div>
+                <div class="block">
+                    <div class="blockhead">
+                        <h2>結果</h2>
+                    </div>
+                    <div class="blockmain">
+                        <div v-if="run" class="loader"></div>
+                        <p v-else v-for = "i in output">{{ i }}</p>
+                    </div>
+                </div>           
+		</div>
+            `
+        })
+
+        vapp.component('sentens', {
+            data() {
+                return {
+                    ramy: ['無', 'ㄓ', 'ㄔ', 'ㄕ', 'ㄖ', 'ㄗ', 'ㄘ', 'ㄙ', 'ㄧ', 'ㄨ', 'ㄩ', 'ㄚ', 'ㄛ', 'ㄜ', 'ㄝ', 'ㄞ', 'ㄟ', 'ㄠ', 'ㄡ', 'ㄢ', 'ㄣ', 'ㄤ', 'ㄥ', 'ㄦ'],
+                    // l: 5,
+                    // n: 1,
+                    // m: 2,
+                    // a: '',
+                    // b: '',
+                }
+            },
+            props: ['i', 'l', 'n', 'm', 'a', 'b', 'r'],
+            emits: ['update:l', 'update:n', 'update:m', 'update:a', 'update:b', 'update:r'],
+            computed: {
+                rdata: {
+                    get() {
+                        return this.r;
+                    },
+                    set(data) {
+                        this.$emit('update:r', data);
+                    }
+                }
+            },
+            template:
+                `
+            <article class="sentens">
+                <h3 class="scname">第{{ i }}句</h3>
+                <div class="slen">
+                    <button @click="$emit('update:l', l+1)" :disabled="l>=20">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
+                            class="bi bi-plus-circle-fill" viewBox="0 0 16 16">
+                            <path
+                                d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3v-3z" />
+                        </svg>
+                    </button>
+                    <button @click="$emit('update:l', l-1)" :disabled="l<=1">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
+                            class="bi bi-dash-circle-fill" viewBox="0 0 16 16">
+                            <path
+                                d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM4.5 7.5a.5.5 0 0 0 0 1h7a.5.5 0 0 0 0-1h-7z" />
+                        </svg>
+                    </button>
+                    <h3>{{l}} 字</h3>
+                </div>
+                <div class="schara1">
+                    <button @click="$emit('update:n', n+1)" :disabled="n>=l">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
+                            class="bi bi-plus-circle-fill" viewBox="0 0 16 16">
+                            <path
+                                d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3v-3z" />
+                        </svg>
+                    </button>
+                    <button @click="$emit('update:n', n-1)" :disabled="n<=1">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
+                            class="bi bi-dash-circle-fill" viewBox="0 0 16 16">
+                            <path
+                                d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM4.5 7.5a.5.5 0 0 0 0 1h7a.5.5 0 0 0 0-1h-7z" />
+                        </svg>
+                    </button>
+                    <h3>第 {{n}} 字</h3>
+                    <input type="text" maxlength="1" size="1" :value="a" @input="$emit('update:a', $event.target.value)">
+                </div>
+                <div class="schara2" v-show="l!=1">
+                    <button @click="$emit('update:m', m+1)" :disabled="m>=l">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
+                            class="bi bi-plus-circle-fill" viewBox="0 0 16 16">
+                            <path
+                                d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3v-3z" />
+                        </svg>
+                    </button>
+                    <button @click="$emit('update:m', m-1)" :disabled="m<=1">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
+                            class="bi bi-dash-circle-fill" viewBox="0 0 16 16">
+                            <path
+                                d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM4.5 7.5a.5.5 0 0 0 0 1h7a.5.5 0 0 0 0-1h-7z" />
+                        </svg>
+                    </button>
+                    <h3>第 {{m}} 字</h3>
+                    <input type="text" maxlength="1" size="1" :value="b" @input="$emit('update:b', $event.target.value)">
+                </div>
+                <div class="sramy">
+                    <h3>壓</h3>
+                    <select v-model='rdata'>
+                        <option v-for="rs in ramy">{{rs}}</option>
+                    </select>
+                    <h3>韻</h3>
+                </div>
+            </article>
+            `
+        })
+
+        vapp.mount('#app')
+
+
+
+
+        var preferredTheme;
+
+        try {
+            preferredTheme = localStorage.getItem("theme");
+        } catch (err) { }
+
+        function setTheme(newTheme) {
+            // console.log(newTheme);
+            if (newTheme !== document.body.className) {
+                window.__theme = newTheme;
+                preferredTheme = newTheme;
+                document.body.className = newTheme;
+            }
+        }
+
+        window.__setPreferredTheme = function (newTheme) {
+            // console.log(newTheme);
+            try {
+                if (newTheme !== preferredTheme) {
+                    localStorage.setItem("theme", newTheme);
+                }
+            } catch (err) { }
+            setTheme(newTheme);
+        };
+
+        var darkQuery = window.matchMedia("(prefers-color-scheme: dark)");
+
+        darkQuery.addListener(function (e) {
+            window.__setPreferredTheme(e.matches ? "dark" : "light");
+        });
+
+        setTheme(preferredTheme || (darkQuery.matches ? "dark" : "light"));
+
+        var button = document.querySelector("#mode");
+        button.addEventListener(
+            "click",
+            function () {
+                if (preferredTheme != 'dark') {
+                    window.__setPreferredTheme('dark');
+                } else {
+                    window.__setPreferredTheme();
+                }
+            },
+        );
+
+    </script>
+
+
+
+</body>
+{% endraw %}
+
+</html>
